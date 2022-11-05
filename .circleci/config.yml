@@ -9,20 +9,20 @@ executors:
 jobs:
   build:
     executor: my-executor
-    working_directory: ~/r
+    working_directory: ~/$PROJECT_DIRECTORY
 
     steps:
       - checkout
 
       - persist_to_workspace:
-          root: "~"
+          root: "~/$PROJECT_DIRECTORY"
           paths:
-            - ./
+            - ./$PROJECT_DIRECTORY
   deploy:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: ./build
+          at: ./$PROJECT_DIRECTORY
       - run: mkdir -p ~/.ssh
       - run:
           name: Add ssh key
@@ -37,7 +37,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID" --progress build $SSH_USER@SSH_HOST:~/$PROJECT_DIRECTORY
+            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST" --progress ~/$PROJECT_DIRECTORY $SSH_USER@SSH_HOST:~/$PROJECT_DIRECTORY
       - run: ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST 'chmod -R 755 ~/$PROJECT_DIRECTORY'
 
 workflows:
