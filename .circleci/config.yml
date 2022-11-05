@@ -18,6 +18,9 @@ jobs:
 
     steps:
       - checkout
+      - run:
+          name: "Add build time to index file"
+          command: date >> index.html
 
       - persist_to_workspace:
           root: << pipeline.parameters.workingdir >>
