@@ -37,8 +37,8 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST" --progress build
-      - run: ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST 'chmod -R 755 ~/build'
+            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID" --progress build $SSH_USER@SSH_HOST:~/$PROJECT_DIRECTORY
+      - run: ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST 'chmod -R 755 ~/$PROJECT_DIRECTORY'
 
 workflows:
   version: 2.1
