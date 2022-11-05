@@ -20,9 +20,9 @@ jobs:
       - checkout
 
       - persist_to_workspace:
-          root: ./
+          root: << pipeline.parameters.workingdir >>
           paths:
-            - << pipeline.parameters.workingdir >>
+            - ./
   deploy:
     executor: my-executor
     steps:
