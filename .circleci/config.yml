@@ -33,6 +33,7 @@ jobs:
           name: Add ssh key
           command: |
             echo $SSH_KEY_KEY >> ~/.ssh/$SSH_KEY_ID
+            chmod 0400 ~/.ssh/$SSH_KEY_ID
       - run: ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
       - run:
           name: Install rsync
@@ -42,8 +43,8 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST" --progress << pipeline.parameters.workingdir >> $SSH_USER@SSH_HOST:~/$PROJECT_DIRECTORY
-      - run: ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST 'chmod -R 755 ~/$PROJECT_DIRECTORY'
+            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID" --progress << pipeline.parameters.workingdir >> $SSH_USER@$SSH_HOST:~/$PROJECT_DIRECTORY
+      # - run: ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST 'chmod -R 755 ~/$PROJECT_DIRECTORY'
 
 workflows:
   version: 2.1
