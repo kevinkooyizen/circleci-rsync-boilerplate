@@ -20,16 +20,21 @@ jobs:
   deploy:
     executor: my-executor
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "$SSH_FINGERPRINT"
       - attach_workspace:
           at: ./
-      - run: mkdir ~/.ssh
       - run: ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
-      - run: sudo apt install rsync
+      - run:
+          name: Install rsync
+          command: |
+            sudo apt update
+            sudo apt install rsync
       - run:
           name: Deploy Over SSH
           command: |
             rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY $SSH_USER@SSH_HOST" --progress build $SSH_USER@$SSH_HOST:build
-#            scp -r build/* $SSH_USER@$SSH_HOST:build
       - run: ssh -i ~/.ssh/$SSH_KEY $SSH_USER@SSH_HOST 'chmod -R 755 ~/build'
 
 workflows:
