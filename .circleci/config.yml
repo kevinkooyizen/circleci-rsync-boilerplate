@@ -1,0 +1,45 @@
+version: 2.1
+
+executors:
+  my-executor:
+    docker:
+      - image: cimg/base:2022.09
+
+jobs:
+  build:
+    executor: my-executor
+    working_directory: ~/r
+
+    steps:
+      - checkout
+
+      - persist_to_workspace:
+          root: "~"
+          paths:
+            - r/build
+  deploy:
+    executor: my-executor
+    steps:
+      - attach_workspace:
+          at: ./build
+      - run: mkdir ~/.ssh
+      - run: ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
+      - run: sudo apt install rsync
+      - run:
+          name: Deploy Over SSH
+          command: |
+            rsync -avz -e "ssh" --progress build $SSH_USER@$SSH_HOST:build
+#            scp -r build/* $SSH_USER@$SSH_HOST:build
+      - run: ssh $SSH_USER@$SSH_HOST 'chmod -R 755 ~/build'
+
+workflows:
+  version: 2.1
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
