@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   workingdir:
     type: string
-    default: "~/$PROJECT_DIRECTORY"
+    default: "~/main"
 
 executors:
   my-executor:
@@ -20,14 +20,14 @@ jobs:
       - checkout
 
       - persist_to_workspace:
-          root: "~/$PROJECT_DIRECTORY"
+          root: << pipeline.parameters.workingdir >>
           paths:
-            - ./$PROJECT_DIRECTORY
+            - << pipeline.parameters.workingdir >>
   deploy:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: ./$PROJECT_DIRECTORY
+          at: << pipeline.parameters.workingdir >>
       - run: mkdir -p ~/.ssh
       - run:
           name: Add ssh key
@@ -42,7 +42,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST" --progress ~/$PROJECT_DIRECTORY $SSH_USER@SSH_HOST:~/$PROJECT_DIRECTORY
+            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST" --progress << pipeline.parameters.workingdir >> $SSH_USER@SSH_HOST:~/$PROJECT_DIRECTORY
       - run: ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST 'chmod -R 755 ~/$PROJECT_DIRECTORY'
 
 workflows:
