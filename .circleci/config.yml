@@ -62,7 +62,6 @@ jobs:
       # - run: ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST 'chmod -R 755 ~/$PROJECT_DIRECTORY'
 
 workflows:
-  version: 2.1
   build-and-deploy:
     jobs:
       - build
