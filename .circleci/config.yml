@@ -22,12 +22,12 @@ jobs:
     executor: my-executor
     steps:
       - attach_workspace:
-          at: ./
+          at: ./build
       - run: mkdir -p ~/.ssh
       - run:
           name: Add ssh key
           command: |
-            cat $SSH_KEY_KEY >> ~/.ssh/$SSH_KEY_ID
+            echo $SSH_KEY_KEY >> ~/.ssh/$SSH_KEY_ID
       - run: ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
       - run:
           name: Install rsync
@@ -37,7 +37,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST" --progress build $SSH_USER@$SSH_HOST:build
+            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST" --progress build
       - run: ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST 'chmod -R 755 ~/build'
 
 workflows:
