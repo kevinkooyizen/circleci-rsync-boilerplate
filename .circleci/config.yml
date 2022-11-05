@@ -48,7 +48,7 @@ jobs:
           # Z option compresses the whole data, reduces the file sizes, and transfers the data to the destination system. It comes in handy while transferring a huge amount of data over a slow internet connection.
           # So, collectively, using this combination of options(-avz), you will have the secure and quick file transfer due to the -a and -z options, while using the -v option, you will have a side-by-side a good amount of information about the transfer.
           command: |
-            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID" --progress << pipeline.parameters.workingdir >> $SSH_USER@$SSH_HOST:~/$PROJECT_DIRECTORY
+            rsync -avz -e "ssh -i ~/.ssh/$SSH_KEY_ID" --progress << pipeline.parameters.workingdir >>/ $SSH_USER@$SSH_HOST:~/$PROJECT_DIRECTORY
       # - run: ssh -i ~/.ssh/$SSH_KEY_ID $SSH_USER@SSH_HOST 'chmod -R 755 ~/$PROJECT_DIRECTORY'
 
 workflows:
