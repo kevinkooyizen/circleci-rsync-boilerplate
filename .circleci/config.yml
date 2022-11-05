@@ -32,9 +32,16 @@ jobs:
       - run:
           name: Add ssh key
           command: |
+            # Decode the key in base64 format to be used in a new ssh key file
             echo $SSH_KEY_KEY_BASE64 | base64 -d >> ~/.ssh/$SSH_KEY_ID
+
+            # Update the permissions of the key file
             chmod 0400 ~/.ssh/$SSH_KEY_ID
-      - run: ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
+
+      - run:
+          name: Add ssh host to known hosts
+          command: ssh-keyscan $SSH_HOST >> ~/.ssh/known_hosts
+        
       - run:
           name: Install rsync
           command: |
